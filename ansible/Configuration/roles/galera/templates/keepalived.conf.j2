@@ -1,0 +1,30 @@
+# Paramètres généraux
+global_defs {
+   enable_script_security
+}
+
+# MariaDB est-il en cours d'exécution ?
+vrrp_script check_mariadb {
+   script "/usr/bin/pgrep mariadb"
+   interval 1
+   fall 2
+   rise 2
+}
+
+# Configuration interface virtuelle
+vrrp_instance VIP {
+   interface ens18
+   state MASTER
+   priority {{ '100' if inventory_hostname == groups['galera'][0] else '50' }}
+   virtual_router_id 70
+   authentication {
+      auth_type PASS
+      auth_pass Vip2022
+   }
+   virtual_ipaddress {
+      192.168.1.80
+   }
+   track_script {
+      check_mariadb
+   }
+}

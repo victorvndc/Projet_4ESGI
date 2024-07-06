@@ -1,0 +1,82 @@
+---
+- name: Install MariaDB, Galera and keepalived
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: true
+  with_items:
+    - mariadb-server
+    - galera-4
+    - rsync
+    - keepalived
+
+- name: Add node IPs and hostnames to hosts
+  ansible.builtin.blockinfile:
+    path: /etc/hosts
+    block: |
+      {% for host in groups['all'] %}
+      {{ hostvars[host].ansible_host }} {{ host }}
+      {% endfor %}
+
+- name: Check if Galera cluster is already running
+  ansible.builtin.command: "mysql -e 'SHOW STATUS LIKE \"wsrep_cluster_status\";'"
+  register: galera_status
+  ignore_errors: true
+  changed_when: galera_status.rc == 0
+
+- name: Set variable galera_cluster_exists based on check
+  ansible.builtin.set_fact:
+    galera_cluster_exists: "{{ 'Primary' in galera_status.stdout }}"
+
+- name: Stop MariaDB service
+  ansible.builtin.service:
+    name: mysql
+    state: stopped
+  when: not galera_cluster_exists
+
+- name: Create Galera configuration file
+  ansible.builtin.template:
+    src: /mnt/c/Users/vicai/projetESGI/Projet_4ESGI/ansible/Configuration/roles/galera/templates/galera.cnf.j2
+    dest: /etc/mysql/conf.d/galera.cnf
+    mode: '0644'
+  when: not galera_cluster_exists
+
+- name: Start Galera cluster on primary node
+  ansible.builtin.command: galera_new_cluster
+  register: galera_new_cluster_result
+  when: inventory_hostname == groups['galera'][0] and not galera_cluster_exists
+  changed_when: galera_new_cluster_result.rc == 0
+
+- name: Start MariaDB service on other nodes
+  ansible.builtin.service:
+    name: mysql
+    state: started
+  register: galera_cluster_node_result
+  when: inventory_hostname != groups['galera'][0] and not galera_cluster_exists
+
+- name: Ensure MariaDB service is enabled on boot
+  ansible.builtin.service:
+    name: mysql
+    enabled: true
+  when: not galera_cluster_exists
+
+- name: Configure Keepalived
+  ansible.builtin.template:
+    src: /mnt/c/Users/vicai/projetESGI/Projet_4ESGI/ansible/Configuration/roles/galera/templates/keepalived.conf.j2
+    dest: /etc/keepalived/keepalived.conf
+    mode: '600'
+
+- name: Create user keepalived_script
+  ansible.builtin.user:
+    name: keepalived_script
+    shell: /sbin/nologin
+    create_home: false
+    system: true
+    state: present
+
+
+- name: Enable and start Keepalived
+  ansible.builtin.service:
+    name: keepalived
+    enabled: true
+    state: started

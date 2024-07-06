@@ -1,6 +1,12 @@
 ---
-- name: Deploiement Configuration des VM
+- name: Deploiement configuration communes des VM
   hosts: all
   become: true
   roles:
     - common
+
+- name: Deploiement configuration du cluster galera
+  hosts: galera
+  become: true
+  roles:
+    - galera
