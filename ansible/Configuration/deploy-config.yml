@@ -1,0 +1,6 @@
+---
+- name: Deploiement Configuration des VM
+  hosts: all
+  become: true
+  roles:
+    - common
