@@ -1,0 +1,39 @@
+---
+- name: Initialize Kubernetes master
+  ansible.builtin.command: kubeadm init --pod-network-cidr=192.168.0.0/16 --control-plane-endpoint "LOAD_BALANCER_DNS:LOAD_BALANCER_PORT" --upload-certs
+  register: kubeadm_init
+  when: inventory_hostname == groups['kube-master'][0]
+
+- name: Create .kube directory for the ansible user
+  ansible.builtin.file:
+    path: /home/{{ ansible_user }}/.kube
+    state: directory
+    owner: "{{ ansible_user }}"
+    mode: '0755'
+  when: inventory_hostname == groups['kube-master'][0]
+
+- name: Copy admin.conf to user's kube config
+  ansible.builtin.copy:
+    src: /etc/kubernetes/admin.conf
+    dest: /home/{{ ansible_user }}/.kube/config
+    remote_src: true
+    owner: "{{ ansible_user }}"
+    mode: '0644'
+  when: inventory_hostname == groups['kube-master'][0]
+
+- name: Install Calico network plugin
+  ansible.builtin.command: kubectl apply -f https://docs.projectcalico.org/v3.14/manifests/calico.yaml
+  environment:
+    KUBECONFIG: /home/{{ ansible_user }}/.kube/config
+  when: inventory_hostname == groups['kube-master'][0]
+
+- name: Save join command for master nodes
+  ansible.builtin.shell: kubeadm token create --print-join-command --ttl 0 > /home/{{ ansible_user }}/kubeadm_join_cmd_master.sh
+  args:
+    executable: /bin/bash
+  when: inventory_hostname == groups['kube-master'][0]
+
+- name: Join other master nodes
+  ansible.builtin.shell: |
+    "{{ lookup('file', '/home/{{ ansible_user }}/kubeadm_join_cmd_master.sh') }} --control-plane --certificate-key {{ kubeadm_init.certificate_key }}"
+  when: inventory_hostname != groups['kube-master'][0]

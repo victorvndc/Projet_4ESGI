@@ -10,3 +10,21 @@
   become: true
   roles:
     - galera
+
+- name: Deploiement configuration du cluster kubernetes
+  hosts: kube-master:kube-worker
+  become: true
+  roles:
+    - kube_common
+
+- name: Deploiement configuration des masters
+  hosts: kube-master
+  become: true
+  roles:
+    - master
+
+- name: Deploiement configuration des workers
+  hosts: kube-worker
+  become: true
+  roles:
+    - worker

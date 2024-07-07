@@ -1,0 +1,10 @@
+---
+- name: Copy join command from master
+  ansible.builtin.fetch:
+    src: /home/{{ ansible_user }}/kubeadm_join_cmd_master.sh
+    dest: /tmp/kubeadm_join_cmd_worker.sh
+    flat: true
+  delegate_to: "{{ groups['kube-master'][0] }}"
+
+- name: Join Kubernetes cluster as worker
+  ansible.builtin.command: "{{ lookup('file', '/tmp/kubeadm_join_cmd_worker.sh') }}"
