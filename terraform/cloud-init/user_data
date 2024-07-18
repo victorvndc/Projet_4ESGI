@@ -1,0 +1,14 @@
+#cloud-config
+hostname: ${hostname}
+local-hostname: ${hostname}
+fqdn: ${hostname}.${domain}
+manage_etc_hosts: true
+package_upgrade: true
+users:
+  - default
+  - name: esgi
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    ssh_authorized_keys:
+      - ssh-ed25519 AAAAB3NzaC1yc2..password.
+    passwd: Root123*
+ssh_pwauth: True
