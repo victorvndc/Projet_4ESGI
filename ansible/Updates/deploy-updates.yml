@@ -1,6 +1,7 @@
 ---
 - name: Updates des machines 
   hosts: all
+  gather_fact: true
   become: true
   roles:
     - common
