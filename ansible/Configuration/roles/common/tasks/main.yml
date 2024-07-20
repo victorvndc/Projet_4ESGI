@@ -19,3 +19,8 @@
     - lsb-release
     - vim
     - locate
+    
+- name: Upgrade all package
+  become: true
+  apt:
+    upgrade: dist
