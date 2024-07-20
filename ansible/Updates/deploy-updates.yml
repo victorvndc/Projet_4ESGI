@@ -1,0 +1,8 @@
+---
+- name: Updates des machines 
+  hosts: all
+  become: true
+  roles:
+    - common
+
+
