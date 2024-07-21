@@ -26,7 +26,7 @@ data "vsphere_compute_cluster" "cluster" {
 }
 
 data "vsphere_datastore" "datastore" {
-  name          = "datastore1"
+  name          = "datastorehost"
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
@@ -47,8 +47,8 @@ resource "vsphere_virtual_machine" "vm" {
   resource_pool_id = data.vsphere_compute_cluster.cluster.resource_pool_id
   datastore_id     = data.vsphere_datastore.datastore.id
 
-  num_cpus = lookup(var.vm_configurations["vm${count.index + 1}"], "cores")
-  memory   = lookup(var.vm_configurations["vm${count.index + 1}"], "memory")
+  num_cpus = var.cpu_count
+  memory   = var.memory_size
   guest_id = data.vsphere_virtual_machine.template.guest_id
 
   network_interface {
@@ -81,7 +81,6 @@ resource "vsphere_virtual_machine" "vm" {
     }
   }
 
-  // Cloud-init configuration
   extra_config = {
     "guestinfo.userdata"      = base64encode(templatefile("cloud-init/user_data", {hostname: "VM${count.index + 1}", domain: var.domain}))
     "guestinfo.userdata.encoding" = "base64"

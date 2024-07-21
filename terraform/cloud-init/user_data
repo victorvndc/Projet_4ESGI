@@ -9,6 +9,6 @@ users:
   - name: esgi
     sudo: ALL=(ALL) NOPASSWD:ALL
     ssh_authorized_keys:
-      - ssh-ed25519 AAAAB3NzaC1yc2..password.
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDiRGyqs59XjO6MxgO40Xk6i/catCy6faBvSsnPP14VvbT5hW3MLMTibKbysyjuJZ5vZNmzIJxm6ZnK4Lcjl1Jfmyxu3I2bm76QgWq1EY24IKkRFoIPfYf/CcjBlAcSquJV3OPPDP6Sf6ZlmGbPFVTGw1qYd6VhXxPcUtXgj9V/y6NIix45yH0Sel9G1/jM+z9B4C40t6wPb13m1pXCXNm6yQqtaxMEDAVvocch4FSG+yDUkY8THwumVCVXNaYopjLQS+egYrCVrhMjLeaPB1YAopScqAGdGGFPYtGGNRhdZ3D9cr9ld1kQPzztedHLd9zho0ENqY6T4sTAgexPbYNbFbSa7Kyk8KZM+beS0ZNpMCbQ46GF9gFtxk/Ar6maBmF5nan7I0aiYTI3l6WZbAB7xpP1vyMLPBEpbbKGtokDOV5mz8jf0196VdJfBalht905iZDQH2w2p9JCSNUtTyC23S7519+55vRYVEjF1skMH7OHk7tD7DGTcNgjdLzD4Q0= taek@DESKTOP-58GMKFP
     passwd: Root123*
 ssh_pwauth: True
