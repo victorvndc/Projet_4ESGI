@@ -36,7 +36,7 @@
 
 - name: Create Galera configuration file
   ansible.builtin.template:
-    src: /mnt/c/Users/vicai/projetESGI/Projet_4ESGI/ansible/Configuration/roles/galera/templates/galera.cnf.j2
+    src: /home/taek/BOSSSS/Projet_4ESGI/ansible/Configuration/roles/galera/templates/galera.cnf.j2
     dest: /etc/mysql/conf.d/galera.cnf
     mode: '0644'
   when: not galera_cluster_exists
@@ -62,7 +62,7 @@
 
 - name: Configure Keepalived
   ansible.builtin.template:
-    src: /mnt/c/Users/vicai/projetESGI/Projet_4ESGI/ansible/Configuration/roles/galera/templates/keepalived.conf.j2
+    src: /home/taek/BOSSSS/Projet_4ESGI/ansible/Configuration/roles/galera/templates/keepalived.conf.j2
     dest: /etc/keepalived/keepalived.conf
     mode: '600'
 
