@@ -13,7 +13,7 @@ vrrp_script check_mariadb {
 
 # Configuration interface virtuelle
 vrrp_instance VIP {
-   interface ens18
+   interface ens192
    state MASTER
    priority {{ '100' if inventory_hostname == groups['galera'][0] else '50' }}
    virtual_router_id 70
@@ -22,7 +22,7 @@ vrrp_instance VIP {
       auth_pass Vip2022
    }
    virtual_ipaddress {
-      192.168.1.80
+      172.28.126.50
    }
    track_script {
       check_mariadb

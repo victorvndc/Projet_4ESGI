@@ -6,7 +6,7 @@
 
 - name: Add Docker APT repository
   ansible.builtin.apt_repository:
-    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable
+    repo: deb [arch=amd64] https://download.docker.com/linux/debian buster stable
     state: present
 
 - name: Install Docker
@@ -15,16 +15,22 @@
     state: present
     update_cache: true
 
-- name: Add Kubernetes APT key
-  ansible.builtin.apt_key:
-    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
-    state: present
+- name: Ajouter le dépôt Kubernetes à sources.list.d
+  ansible.builtin.shell: echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /" | tee /etc/apt/sources.list.d/kubernetes.list
 
-- name: Add Kubernetes APT repository
-  ansible.builtin.apt_repository:
-    repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
-    state: present
 
+- name: Télécharger et installer la clé GPG pour le dépôt Kubernetes
+  ansible.builtin.shell: curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+      
+- name: Mettre à jour la liste des paquets
+  ansible.builtin.apt:
+    update_cache: yes
+
+# - name: update apt cache
+#   ansible.builtin.apt:
+#     update_cache: yes
+#   register: update_result
+      
 - name: Install kubeadm, kubelet and kubectl
   ansible.builtin.apt:
     name: "{{ item }}"
@@ -34,7 +40,6 @@
     - kubelet
     - kubeadm
     - kubectl
-
 
 - name: Disable swap
   ansible.builtin.command: swapoff -a
