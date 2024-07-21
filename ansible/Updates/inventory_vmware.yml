@@ -1,0 +1,18 @@
+plugin: community.vmware.vmware_vm_inventory
+strict: false
+hostname: 172.18.126.12
+username: administrator@vsphere.local
+password: Root123*
+validate_certs: false
+with_tags: true
+properties:
+  - 'config.name'
+  - 'runtime.powerState'
+  - 'guest.ipAddress'
+  - 'config.name'
+  - 'config.uuid'
+hostnames:
+  - 'config.name'
+filters:
+  - "tag_category.Accès is defined and 'Debian' in tag_category.Accès"
+  - "runtime.powerState == 'poweredOn'"

@@ -1,0 +1,18 @@
+---
+- name: Check for available updates
+  become: true
+  ansible.builtin.shell: apt list --upgradable 2>/dev/null | tail -n +2 | wc -l
+  register: apt_check
+  changed_when: apt_check.stdout | int > 0
+
+- name: Set Snapshot Vsphere
+  ansible.builtin.include_tasks: roles/common/tasks/create_snapshot.yml
+  when: apt_check.changed
+
+- name: System Update DEBIAN
+  ansible.builtin.include_tasks: system_update.yml
+  when: apt_check.changed
+
+- name: Reboot Needed
+  ansible.builtin.include_tasks: reboot.yml
+  when: apt_check.changed

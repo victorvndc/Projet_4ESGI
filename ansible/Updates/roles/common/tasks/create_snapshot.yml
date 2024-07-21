@@ -1,0 +1,16 @@
+---
+- name: Create a VM snapshot before update
+  community.vmware.vmware_guest_snapshot:
+    hostname: 172.18.126.12
+    username: administrator@vsphere.local
+    password: Root123*
+    datacenter: "DatacenterProjet"
+    name: "{{ inventory_hostname }}"
+    folder: cluster-a
+    state: present
+    memory_dump: true
+    snapshot_name: pre-update-snapshot
+    description: Snapshot before OS updates
+    validate_certs: false
+  delegate_to: localhost
+  register: snapshot_result

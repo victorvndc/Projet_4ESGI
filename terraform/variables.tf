@@ -48,3 +48,9 @@ variable "memory_size" {
   type        = number
   default     = 2048
 }
+
+variable "vm_tag" {
+  description = "Tag for the VM"
+  type        = string
+  default     = "debian"
+}

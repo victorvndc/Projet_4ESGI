@@ -85,4 +85,6 @@ resource "vsphere_virtual_machine" "vm" {
     "guestinfo.userdata"      = base64encode(templatefile("cloud-init/user_data", {hostname: "VM${count.index + 1}", domain: var.domain}))
     "guestinfo.userdata.encoding" = "base64"
   }
+
+  tags = ["debian"]
 }

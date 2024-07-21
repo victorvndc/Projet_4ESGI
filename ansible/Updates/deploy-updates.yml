@@ -1,9 +1,16 @@
 ---
-- name: Updates des machines 
+- name: Update Debian servers
   hosts: all
-  gather_fact: true
-  become: true
-  roles:
-    - common
+  gather_facts: true
 
+  tasks:    
+    - name: Apply Debian Updates
+      ansible.builtin.include_role:
+        name: debian
+      when: ansible_facts['os_family'] == "Debian"
 
+    
+    - name: Apply Common Tasks for Debian
+      ansible.builtin.include_role:
+        name: common
+      when: ansible_facts['os_family'] == "Debian"

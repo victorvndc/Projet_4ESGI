@@ -10,11 +10,11 @@
     - python3-venv
     - libssl-dev
     - libffi-dev
+  delegate_to: localhost
 
-- name: Installation de Pyvmomi pour vsphere ansible.builtin.apt
-  pip:
-    name: pyvmovi
+- name: Install PyVmomi Python SDK for the VMware vSphere API
+  ansible.builtin.pip:
+    name: pyvmomi
     state: present
   become: true
-
-
+  delegate_to: localhost
